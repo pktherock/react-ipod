@@ -10,13 +10,13 @@ import song4 from "./assets/audios/song4.mp3";
 import song5 from "./assets/audios/song5.mp3";
 
 // Import songs cover song
-import song1Img from "./assets/img/song1Img.jpg";
-import song2Img from "./assets/img/song2Img.jpg";
+import song1Img from "./assets/img/song1Img.png";
+import song2Img from "./assets/img/song2Img.png";
 import song3Img from "./assets/img/song3Img.png";
 import song4Img from "./assets/img/song4Img.png";
 import song5Img from "./assets/img/song5Img.png";
 
-// Import wallpapers
+// todo Import wallpapers
 import wallpaper1 from "./assets/img/wallpaper1.jpg";
 import wallpaper2 from "./assets/img/wallpaper2.jpg";
 import wallpaper3 from "./assets/img/wallpaper3.jpg";
@@ -30,27 +30,38 @@ const lengthMenuKey = { "-1": 3, 1: 2, 4: 4, 8: 4, 3: 2, 9: 3, 10: 2 };
 // which menu can be rendered by key menu
 const menuMapping = { "-1": [0, 1, 2, 3], 1: [4, 5, 6], 3: [8, 9, 10] };
 const songItemsUrl = [song1, song2, song3, song4, song5]; //songs list
-const songImgItemsUrl = [song1Img, song2Img, song3Img, song4Img, song5Img]; //song images list
-const wallpaperItems = [wallpaper1, wallpaper2, wallpaper3]; //wallpapers
+
+//song images list
+const songImgItemsUrl = [song1Img, song2Img, song3Img, song4Img, song5Img];
+
+const songItems = [
+  "Teere mohalle - Mamta Sharma",
+  "Tera Ishq Bada Teekha - Javed Ali & Shreya Ghoshal",
+  "Kar Gayi Chull - Badshah, Arman Malik",
+  "Jashn-e-Ishqa - Javed Ali & Shadab Faridi",
+  "Laila Main Laila - Pawni Pandey, Kalyanji",
+];
+
+const wallpaperItems = [wallpaper1, wallpaper2, wallpaper3]; // todo
 
 function App() {
   const [currentMenu, setCurrentMenu] = useState(-2);
   const [active, setActive] = useState(0);
   const [songIndex, setSongIndex] = useState(0);
   const [navigationStack, setNavigationStack] = useState([]);
-  const [songUrl, setSongUrl] = useState(); // todo
+  const [songUrl, setSongUrl] = useState(song1);
   const [playing, setPlaying] = useState(false);
-  const [audio, setAudio] = useState(new Audio(song1)); // todo
-  const [songImgUrl, setSongImgUrl] = useState(); // todo
-  const [wallpaper, setWallpaper] = useState(0);
+  const [audio, setAudio] = useState(new Audio(song1));
+  const [songImgUrl, setSongImgUrl] = useState(song1Img);
+  const [wallpaper, setWallpaper] = useState(0); // todo
 
-  // FUNCTION FOR : SET WALLPAPER OF iPod Body
+  // todo function to set wallpaper
   const handleChangeWallpaper = (id) => {
     // todo
     setWallpaper(id);
   };
 
-  // FUNCTION FOR : CHANGE PLAYING MUSIC
+  // function to change music
   const changePlayingSongFromMusicMenu = (id, navigationStack) => {
     const songUrl = songItemsUrl[id];
     const songImgUrl = songImgItemsUrl[id];
@@ -63,11 +74,10 @@ function App() {
     setSongIndex(id);
     setAudio(() => new Audio(songUrl)); // todo
     setSongImgUrl(songImgUrl);
-    audio.play();
   };
 
+  // function to handle long press on forward btn
   const seekSongForward = (e) => {
-    console.log(e.detail.interval);
     if (currentMenu === -2 || playing === false) return;
 
     if (e.detail.interval < 250) {
@@ -93,31 +103,10 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    if (playing) {
-      audio.play();
-      audio.addEventListener("ended", () => {
-        console.log("new song started...");
-        let currentSongIndex = songIndex;
-        if (currentSongIndex === songItemsUrl.length - 1) {
-          currentSongIndex = 0;
-        } else {
-          currentSongIndex++;
-        }
-        const songUrl = songItemsUrl[currentSongIndex];
-        const songImgUrl = songImgItemsUrl[currentSongIndex];
-        setSongIndex(currentSongIndex);
-        setSongImgUrl(songImgUrl);
-        setSongUrl(songUrl);
-        setAudio(new Audio(songUrl));
-      });
-    }
-  }, [audio, playing, songIndex]);
-
+  // function to handle long press on reverse btn
   const seekSongReverse = (e) => {
     if (currentMenu === -2 || playing === false) return;
 
-    console.log(e.detail.interval);
     if (e.detail.interval < 250) {
       audio.pause();
       let currentSongIndex = songIndex;
@@ -126,14 +115,13 @@ function App() {
       } else {
         currentSongIndex--;
       }
-      const songUrl = songItemsUrl[songIndex];
-      const songImgUrl = songImgItemsUrl[songIndex];
+      const songUrl = songItemsUrl[currentSongIndex];
+      const songImgUrl = songImgItemsUrl[currentSongIndex];
 
       setSongIndex(currentSongIndex);
       setSongImgUrl(songImgUrl);
       setSongUrl(songUrl);
-      setAudio(() => new Audio(songUrl));
-      audio.play();
+      setAudio(new Audio(songUrl));
     } else if (e.detail.interval > 250 && e.detail.interval < 10000) {
       const interval = e.detail.interval / 100;
       setAudio((prevState) => {
@@ -143,10 +131,10 @@ function App() {
     }
   };
 
+  // function to play and pause
   const togglePlayPause = () => {
-    if (currentMenu === -2) {
-      return;
-    }
+    if (currentMenu === -2) return;
+
     if (playing === true) {
       setPlaying(false);
       audio.pause();
@@ -156,6 +144,7 @@ function App() {
     }
   };
 
+  // function to handle wheel movement and set to track menu
   const updateActiveMenu = (direction, menu) => {
     if (
       menu !== -1 &&
@@ -183,24 +172,24 @@ function App() {
       if (active <= min) {
         setActive(max);
       } else {
-        setActive(active + 1);
+        setActive(active - 1);
       }
     }
   };
 
+  // function to handle click event on backward btn
   const changeMenuBackward = () => {
     const navigationStacks = navigationStack.slice();
     if (currentMenu === -2) return;
 
     const prevId = navigationStacks.pop();
-    console.log("prevId" + prevId);
     setCurrentMenu(prevId);
     setNavigationStack(navigationStacks);
     setActive(0);
   };
 
+  // function to handle click event on forward btn
   const changeMenuForward = (id, fromMenu) => {
-    console.log(id, fromMenu);
     const navigationStacks = navigationStack.slice();
 
     if (
@@ -268,12 +257,46 @@ function App() {
     setActive(0);
   };
 
+  useEffect(() => {
+    if (playing) {
+      audio.play();
+
+      // add event listener, so next song automatically will play
+      audio.addEventListener("ended", () => {
+        console.log("new song started...");
+        let currentSongIndex = songIndex;
+        if (currentSongIndex === songItemsUrl.length - 1) {
+          currentSongIndex = 0;
+        } else {
+          currentSongIndex++;
+        }
+        const songUrl = songItemsUrl[currentSongIndex];
+        const songImgUrl = songImgItemsUrl[currentSongIndex];
+        setSongIndex(currentSongIndex);
+        setSongImgUrl(songImgUrl);
+        setSongUrl(songUrl);
+        setAudio(new Audio(songUrl));
+      });
+    }
+  }, [audio, playing, songIndex]);
+
   return (
-    <div className="flex justify-center items-center w-full h-screen bg-gray-400 ">
+    <div className="flex justify-center items-center w-full h-screen bg-gray-800 ">
       <IpodCase>
         <Display>
           <Navbar />
-          <Screen />
+          <Screen
+            active={active}
+            currentMenu={currentMenu}
+            songImgUrl={songImgUrl}
+            menuItems={menuItems}
+            musicItems={musicItems}
+            songItems={songItems}
+            audio={audio}
+            songUrl={songUrl}
+            playing={playing}
+            songIndex={songIndex}
+          />
         </Display>
 
         <Wheel

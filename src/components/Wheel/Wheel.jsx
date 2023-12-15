@@ -129,7 +129,7 @@ function Wheel({
 Wheel.propTypes = {
   active: PropTypes.number.isRequired,
   updateActiveMenu: PropTypes.func.isRequired,
-  currentMenu: PropTypes.number,
+  currentMenu: PropTypes.number.isRequired,
   changeMenuBackward: PropTypes.func.isRequired,
   togglePlayPause: PropTypes.func.isRequired,
   seekSongForward: PropTypes.func.isRequired,

@@ -1,0 +1,5 @@
+.ipod-case {
+  box-shadow: inset 0 0 20px 3px black;
+  -webkit-box-reflect: below 8px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent), to(rgba(250, 250, 250, 0.1)));
+  background-color: rgb(228, 84, 84);
+}
